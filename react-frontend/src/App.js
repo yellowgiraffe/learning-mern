@@ -15,7 +15,7 @@ const App = () => {
         <Route path="/" exact>
           <Users />
         </Route>
-        <Route path="/users/:userID/books" exact>
+        <Route path="/users/:userId/books" exact>
           <UserBooks />
         </Route>
         <Route path="/books/new" exact>

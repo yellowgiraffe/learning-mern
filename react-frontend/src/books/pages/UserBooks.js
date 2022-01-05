@@ -1,4 +1,5 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
 import BookList from '../components/BookList';
 
@@ -24,7 +25,10 @@ const BOOKS = [
 ];
 
 const UserBooks = (props) => {
-  return <BookList books={BOOKS}/>;
+  const { userId } = useParams();
+  const userBooks = BOOKS.filter((book) => book.userId === userId);
+
+  return <BookList books={userBooks}/>;
 };
 
 export default UserBooks;
