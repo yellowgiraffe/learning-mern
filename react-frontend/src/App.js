@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-do
 
 import Users from './users/pages/Users';
 import NewBook from './books/pages/NewBook';
+import UserBooks from './books/pages/UserBooks';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 
 const App = () => {
@@ -13,6 +14,9 @@ const App = () => {
       <Switch>
         <Route path="/" exact>
           <Users />
+        </Route>
+        <Route path="/users/:userID/books" exact>
+          <UserBooks />
         </Route>
         <Route path="/books/new" exact>
           <NewBook />
