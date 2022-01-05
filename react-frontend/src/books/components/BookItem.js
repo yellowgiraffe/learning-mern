@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Card from '../../shared/components/UIElements/Card';
+import Button from '../../shared/components/FormElements/Button';
 import './BookItem.css';
 
 const BookItem = (props) => {
@@ -15,9 +16,9 @@ const BookItem = (props) => {
           <p>{props.description}</p>
         </div>
         <div className="book-item__actions">
-          <button>Read</button>
-          <button>Edit</button>
-          <button>Delete</button>
+          <Button inverse>Read</Button>
+          <Button to={`/books/${props.id}`}>Edit</Button>
+          <Button danger>Delete</Button>
         </div>
       </Card>
 
