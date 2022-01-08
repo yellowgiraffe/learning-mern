@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
+import Card from '../../shared/components/UIElements/Card';
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
@@ -31,7 +32,8 @@ const BOOKS = [
   }
 ];
 
-const UpdateBook = (props) => {
+const UpdateBook = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const bookId = useParams().bookId;
 
   const [formState, inputHandler, setFormData] = useForm(
@@ -53,20 +55,23 @@ const UpdateBook = (props) => {
     const bookToUpdate = BOOKS.find((book) => book.id === bookId);
 
     useEffect(() => {
-      setFormData({
-        title: {
-          value: bookToUpdate.title,
-          isValid: true,
-        },
-        author: {
-          value: bookToUpdate.author,
-          isValid: true,
-        },
-        description: {
-          value: bookToUpdate.description,
-          isValid: true,
-        }
-      }, true)
+      if (bookToUpdate) {
+        setFormData({
+          title: {
+            value: bookToUpdate.title,
+            isValid: true,
+          },
+          author: {
+            value: bookToUpdate.author,
+            isValid: true,
+          },
+          description: {
+            value: bookToUpdate.description,
+            isValid: true,
+          }
+        }, true);
+      }
+      setIsLoading(false);
     }, [setFormData, bookToUpdate]);
 
     const bookUpdateSubmitHandler = (event) => {
@@ -77,7 +82,17 @@ const UpdateBook = (props) => {
   if (!bookToUpdate) {
     return (
       <div className="center">
-        <h2>Update your book</h2>
+        <Card>
+        <h2>Could not find the book :(</h2>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="center">
+        <h2>Loading...</h2>
       </div>
     );
   }

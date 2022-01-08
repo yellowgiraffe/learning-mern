@@ -2,6 +2,7 @@ import React from 'react';
 
 import Card from '../../shared/components/UIElements/Card';
 import BookItem from './BookItem';
+import Button from '../../shared/components/FormElements/Button';
 import './BookList.css'
 
 const BookList = (props) => {
@@ -10,7 +11,7 @@ const BookList = (props) => {
       <div className="book-list center">
         <Card>
           <h2>No books found. Maybe create one?</h2>
-          <button>Shere Book Summary</button>
+          <Button to="/books/new">Shere Book Summary</Button>
         </Card>
       </div>
     );
