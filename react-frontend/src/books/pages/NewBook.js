@@ -28,13 +28,13 @@ const NewBook = () => {
     false
   );
 
-  const placeSubmitHandler = (event) => {
+  const bookSubmitHandler = (event) => {
     event.preventDefault();
     console.log(formState.inputs); // Need to send to the backend
   }
 
   return (
-    <form className="book-form" onSubmit={placeSubmitHandler}>
+    <form className="book-form" onSubmit={bookSubmitHandler}>
       <Input
         id="title"
         element="input"

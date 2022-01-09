@@ -5,6 +5,7 @@ import Users from './users/pages/Users';
 import NewBook from './books/pages/NewBook';
 import UserBooks from './books/pages/UserBooks';
 import UpdateBook from './books/pages/UpdateBook';
+import Login from './users/pages/Login';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 
 const App = () => {
@@ -15,6 +16,9 @@ const App = () => {
       <Switch>
         <Route path="/" exact>
           <Users />
+        </Route>
+        <Route path="/login" exact>
+          <Login />
         </Route>
         <Route path="/users/:userId/books" exact>
           <UserBooks />
