@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import Card from '../../shared/components/UIElements/Card';
 import Button from '../../shared/components/FormElements/Button';
 import Modal from '../../shared/components/UIElements/Modal';
+import { LoginContext } from '../../shared/context/login-contex';
 import './BookItem.css';
 
 const BookItem = (props) => {
+  const auth = useContext(LoginContext);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const showModalDeleteHandler = () => {
@@ -48,8 +51,12 @@ const BookItem = (props) => {
         </div>
         <div className="book-item__actions">
           <Button inverse>Read</Button>
-          <Button to={`/books/${props.id}`}>Edit</Button>
-          <Button danger onClick={showModalDeleteHandler}>Delete</Button>
+          {auth.isLoggedIn && (
+            <Button to={`/books/${props.id}`}>Edit</Button>
+          )}
+          {auth.isLoggedIn && (
+            <Button danger onClick={showModalDeleteHandler}>Delete</Button>
+          )}
         </div>
       </Card>
     </li>

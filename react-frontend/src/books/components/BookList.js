@@ -11,7 +11,7 @@ const BookList = (props) => {
       <div className="book-list center">
         <Card>
           <h2>No books found. Maybe create one?</h2>
-          <Button to="/books/new">Shere Book Summary</Button>
+          <Button to="/books/new">Share Book Summary</Button>
         </Card>
       </div>
     );
