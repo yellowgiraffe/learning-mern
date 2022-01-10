@@ -1,5 +1,7 @@
 const express = require('express');
 
+const HttpError = require('../models/httpError')
+
 const router = express.Router();
 
 const BOOKS = [
@@ -35,14 +37,24 @@ router
   .route('/:bookId')
   .get((req, res) => {
     const bookId = req.params.bookId;
-    res.json({FOUND: BOOKS.find((book) => book.id === bookId)});
+    const book = BOOKS.find((book) => book.id === bookId);
+    if (!book) {
+      const error = new HttpError('COULD NOT FIND A BOOK WITH THIS ID', 404);
+      throw error;
+    }
+    res.json({FOUND: book});
 });
 
 router
   .route('/user/:userId')
-  .get((req, res) => {
+  .get((req, res, next) => {
     const userId = req.params.userId;
-    res.json({FOUND: BOOKS.find((book) => book.userId === userId)})
-  })
+    const book = BOOKS.find((book) => book.userId === userId);
+    if (!book) {
+      const error = new HttpError('COULD NOT FIND BOOKS FOR THIS USER', 404);
+      return next(error);
+    }
+    res.json({FOUND: book})
+  });
 
 module.exports = router;
