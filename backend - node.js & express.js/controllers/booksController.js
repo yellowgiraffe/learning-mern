@@ -1,8 +1,8 @@
-const uuid = require('uuid/v4');
+const uuid = require('uuid');
 
 const HttpError = require('../models/httpError');
 
-const BOOKS = [
+let BOOKS = [
   {
     id: 'book1',
     image: 'https://aliabdaal.com/content/images/size/w600/2021/02/Atomic-Habits.jpg',
@@ -55,4 +55,28 @@ exports.addNewBook = (req, res) => {
   BOOKS.push(newBook);
 
   res.status(201).json({ newBook });
+}
+
+exports.updateBook = (req, res) => {
+  const { title, author, description, userId } = req.body;
+  const bookId = req.params;
+  const index = BOOKS.findIndex((book) => book.id === bookId);
+  let book = { ...BOOKS.find((book) => book.id === bookId) };
+  book = {
+    title,
+    author,
+    description,
+    userId,
+  };
+
+  BOOKS[index] = book;
+
+  res.json({ book });
+}
+
+exports.deleteBook = (req, res) => {
+  const bookId = req.params;
+  const BOOKS = BOOKS.filter((book) => book.id !== bookId);
+
+  res.json(BOOKS);
 }
