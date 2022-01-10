@@ -1,13 +1,15 @@
 const express = require('express');
 
 const booksRouter = require('./routes/booksRoutes');
-const HttpError = require('./models/httpError')
+const usersRouter = require('./routes/usersRoutes');
+const HttpError = require('./models/httpError');
 
 const app = express();
 
 app.use(express.json());
 
 app.use('/api/books', booksRouter);
+app.use('/api/users', usersRouter);
 
 app.use((req, res) => {
   const error = new HttpError('PAGE NOT FOUND', 404)

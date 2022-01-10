@@ -1,3 +1,6 @@
+const uuid = require('uuid');
+const HttpError = require('../models/httpError');
+
 const USERS = [
   {
     id: 'user1',
@@ -6,3 +9,40 @@ const USERS = [
     books: 3,
   }
 ];
+
+exports.getUsersList = (req, res) => {
+  if (USERS.length === 0) {
+    return res.json({message: 'COULD NOT FIND ANY USER'})
+  }
+  res.json({ USERS });
+};
+
+exports.signup = (req, res) => {
+  const { name, email, password } = req.body;
+  // implement verification if user already exists 
+  const newUser = {
+    id: uuid(),
+    name,
+    email,
+    password,
+  };
+
+  USERS.push(newUser);
+
+  res.status(201).json({user: newUser});
+}
+
+exports.login = (req, res) => {
+  const { email, passowrd } = req.body;
+
+  const user = USERS.find((user) => {
+    return user.email === email && user.passowrd === passowrd;
+  });
+
+  if (!user) {
+    const error = new HttpError('COULD NOT FIND USER IN DATABASE', 401);
+    throw error;
+  }
+
+  res.json({ message: 'YOU ARE LOGGED IN'});
+};

@@ -34,12 +34,12 @@ exports.getBookById = (req, res) => {
 
 exports.getBooksByUserId = (req, res, next) => {
   const userId = req.params.userId;
-  const book = BOOKS.find((book) => book.userId === userId);
-  if (!book) {
+  const books = BOOKS.filter((book) => book.userId === userId);
+  if (books.length === 0) {
     const error = new HttpError('COULD NOT FIND BOOKS FOR THIS USER', 404);
     return next(error);
   }
-  res.json({FOUND: book})
+  res.json({FOUND: books})
 };
 
 exports.addNewBook = (req, res) => {
