@@ -6,6 +6,6 @@ const app = express();
 
 app.use(express.json());
 
-app.use(booksRouter);
+app.use('/api/books', booksRouter);
 
 app.listen(5000);
