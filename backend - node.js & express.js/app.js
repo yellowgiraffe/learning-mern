@@ -12,11 +12,11 @@ app.use('/api/books', booksRouter);
 //   res.status(404).json({RESULT: 'NOT FOUND'});
 // });
 
-app.use((error, req, res) => {
+app.use((error, req, res, next) => {
   if (res.headerSent) {
     return next(error);
   }
-  res.status(erroe.code || 404).json({RESULT: error.message || 'Anknown error'});
+  res.status(error.code || 404).json({RESULT: error.message || 'Anknown error'});
 });
 
 app.listen(5000);

@@ -1,3 +1,5 @@
+const uuid = require('uuid/v4');
+
 const HttpError = require('../models/httpError');
 
 const BOOKS = [
@@ -39,3 +41,18 @@ exports.getBooksByUserId = (req, res, next) => {
   }
   res.json({FOUND: book})
 };
+
+exports.addNewBook = (req, res) => {
+  const { title, author, description, userId } = req.body;
+  const newBook = {
+    id: uuid(),
+    title,
+    author,
+    description,
+    userId,
+  }
+
+  BOOKS.push(newBook);
+
+  res.status(201).json({ newBook });
+}

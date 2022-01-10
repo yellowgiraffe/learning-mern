@@ -5,6 +5,10 @@ const booksControllers = require('../controllers/booksController');
 const router = express.Router();
 
 router
+  .route('/')
+  .post(booksControllers.addNewBook);
+
+router
   .route('/:bookId')
   .get(booksControllers.getBookById);
 
