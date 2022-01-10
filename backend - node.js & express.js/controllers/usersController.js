@@ -18,6 +18,11 @@ exports.getUsersList = (req, res) => {
 };
 
 exports.signup = (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new HttpError('Invalid inputs passed. Please try again.', 422)
+  }
+
   const { name, email, password } = req.body;
   // implement verification if user already exists 
   const newUser = {

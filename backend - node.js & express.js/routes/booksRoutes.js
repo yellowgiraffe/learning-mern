@@ -1,17 +1,43 @@
 const express = require('express');
 
+const { check } = require('express-validator');
+
 const booksControllers = require('../controllers/booksController');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(booksControllers.addNewBook);
+  .post([
+    check('title')
+      .not()
+      .isEmpty(),
+    check('author')
+    .not()
+    .isEmpty(),
+    check('description')
+    .not()
+    .isEmpty()
+    .isLength({min: 5})
+  ],
+  booksControllers.addNewBook);
 
 router
   .route('/:bookId')
   .get(booksControllers.getBookById)
-  .patch(booksControllers.updateBook)
+  .patch([
+    check('title')
+      .not()
+      .isEmpty(),
+    check('author')
+      .not()
+      .isEmpty(),
+    check('description')
+      .not()
+      .isEmpty()
+      .isLength({min: 5})
+  ],
+  booksControllers.updateBook)
   .delete(booksControllers.deleteBook);
 
 router

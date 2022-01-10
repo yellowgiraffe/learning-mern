@@ -1,4 +1,5 @@
 const uuid = require('uuid');
+const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/httpError');
 
@@ -43,6 +44,11 @@ exports.getBooksByUserId = (req, res, next) => {
 };
 
 exports.addNewBook = (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new HttpError('Invalid inputs passed. Please try again.', 422)
+  }
+
   const { title, author, description, userId } = req.body;
   const newBook = {
     id: uuid(),
@@ -55,9 +61,14 @@ exports.addNewBook = (req, res) => {
   BOOKS.push(newBook);
 
   res.status(201).json({ newBook });
-}
+};
 
 exports.updateBook = (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new HttpError('Invalid inputs passed. Please try again.', 422)
+  }
+
   const { title, author, description, userId } = req.body;
   const bookId = req.params;
   const index = BOOKS.findIndex((book) => book.id === bookId);
@@ -72,11 +83,15 @@ exports.updateBook = (req, res) => {
   BOOKS[index] = book;
 
   res.json({ book });
-}
+};
 
 exports.deleteBook = (req, res) => {
-  const bookId = req.params;
+  const bookId = req.params.bookId;
+  if (!BOOKS.find((book) => book.id !== bookId)) {
+    throw new HttpError('Could not find a plase with that ID', 404);
+  }
+
   const BOOKS = BOOKS.filter((book) => book.id !== bookId);
 
   res.json(BOOKS);
-}
+};
