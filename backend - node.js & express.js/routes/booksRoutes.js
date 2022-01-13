@@ -41,7 +41,7 @@ router
   .delete(booksControllers.deleteBook);
 
 router
-  .route('/user/:userId')
+  .route('/users/:userId')
   .get(booksControllers.getBooksByUserId);
 
 module.exports = router;

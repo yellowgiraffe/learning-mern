@@ -2,96 +2,122 @@ const uuid = require('uuid');
 const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/httpError');
+const Book = require('../models/book');
 
-let BOOKS = [
-  {
-    id: 'book1',
-    image: 'https://aliabdaal.com/content/images/size/w600/2021/02/Atomic-Habits.jpg',
-    title: 'Atomic Habits',
-    author: 'James Clear',
-    description: 'This book helped me understand how habits are formed and whatwe can do to build long-lasting chains of cues, cravings, responses, and rewards to create systems that will help us achieve our goals.',
-    userId: 'user1',
-
-  },
-  {
-    id: 'book2',
-    image: 'https://aliabdaal.com/content/images/size/w600/2021/02/Your-Money-or-Your-Life.jpg',
-    title: 'Your Money or Your Life',
-    author: 'Vicki Robin',
-    description: 'This book completely changed my relationship with money. I think everyone should give it a read. Even though it’s portrayed as a personal finance book, it gives answers to much deeper questions than just “How do I save more?”',
-    userId: 'user2',
-  }
-];
-
-exports.getBookById = (req, res) => {
+exports.getBookById = async (req, res) => {
   const bookId = req.params.bookId;
-  const book = BOOKS.find((book) => book.id === bookId);
+  let book;
+
+  try {
+    book = await Book.findById(bookId);
+  } catch (err) {
+    const error = new HttpError('Something went wrong on the server side. Please try again', 500);
+    return next(error);
+  }
+
   if (!book) {
     const error = new HttpError('COULD NOT FIND A BOOK WITH THIS ID', 404);
-    throw error;
+    return next(error);
   }
-  res.json({FOUND: book});
+
+  res.json({ FOUND: book.toObject({ getters: true }) });
 };
 
-exports.getBooksByUserId = (req, res, next) => {
+exports.getBooksByUserId = async (req, res, next) => {
   const userId = req.params.userId;
-  const books = BOOKS.filter((book) => book.userId === userId);
+  let books;
+
+  try {
+    books = await Book.find({ userId });
+  } catch (err) {
+    const error = new HttpError('Something went wrong on the server side. Please try again', 500);
+    return next(error);
+  }
+
   if (books.length === 0) {
     const error = new HttpError('COULD NOT FIND BOOKS FOR THIS USER', 404);
     return next(error);
   }
-  res.json({FOUND: books})
+  res.json({ FOUND: books.map((book) => book.toObject({ getters: true })) });
 };
 
-exports.addNewBook = (req, res) => {
+exports.addNewBook = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     throw new HttpError('Invalid inputs passed. Please try again.', 422)
   }
 
   const { title, author, description, userId } = req.body;
-  const newBook = {
-    id: uuid(),
+  const newBook = new Book({
     title,
     author,
     description,
+    image: 'https://aliabdaal.com/content/images/size/w600/2021/02/Atomic-Habits.jpg',
     userId,
-  }
+  });
 
-  BOOKS.push(newBook);
+  try {
+    await newBook.save();
+  } catch (err) {
+    const error = new HttpError('Saving new book failed. Please try again.', 500);
+    return next(error);
+  }
 
   res.status(201).json({ newBook });
 };
 
-exports.updateBook = (req, res) => {
+exports.updateBook = async (req, res, next) => {
   const errors = validationResult(req);
+
   if (!errors.isEmpty()) {
     throw new HttpError('Invalid inputs passed. Please try again.', 422)
   }
 
-  const { title, author, description, userId } = req.body;
-  const bookId = req.params;
-  const index = BOOKS.findIndex((book) => book.id === bookId);
-  let book = { ...BOOKS.find((book) => book.id === bookId) };
-  book = {
-    title,
-    author,
-    description,
-    userId,
-  };
+  const { bookId }  = req.params;
 
-  BOOKS[index] = book;
+  let book;
 
-  res.json({ book });
-};
-
-exports.deleteBook = (req, res) => {
-  const bookId = req.params.bookId;
-  if (!BOOKS.find((book) => book.id !== bookId)) {
-    throw new HttpError('Could not find a plase with that ID', 404);
+  try {
+    book = await Book.findById(bookId);
+  } catch (err) {
+    const error = new HttpError('Something went wrong on the server side. Please try again', 500);
+    return next(error);
   }
 
-  const BOOKS = BOOKS.filter((book) => book.id !== bookId);
+  const { title, author, description } = req.body;
 
-  res.json(BOOKS);
+  book.title = title;
+  book.author = author;
+  book.description = description;
+
+
+  try {
+    await book.save()
+  } catch(err) {
+    const error = new HttpError('Update failed. Please try again.', 500);
+    return next(error);
+  }
+
+  res.json({ UPDATED: book.toObject({ getters: true}) });
+};
+
+exports.deleteBook = async (req, res, next) => {
+  const { bookId } = req.params;
+  let book;
+
+  try {
+    book = await Book.findById(bookId);
+  } catch (err) {
+    const error = new HttpError('Something went wrong on the server side. Make sure if the books with this id exists and try again', 500);
+    return next(error);
+  }
+
+  try {
+    await book.remove();
+  } catch (err) {
+    const error = new HttpError('Something went wrong on the server side. Please try again', 500);
+    return next(error);
+  }
+
+  res.json({ message: 'The book summary is removed'});
 };
