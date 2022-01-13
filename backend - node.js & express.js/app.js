@@ -1,8 +1,10 @@
 const express = require('express');
+const mongoose = require('mongoose');
 
 const booksRouter = require('./routes/booksRoutes');
 const usersRouter = require('./routes/usersRoutes');
 const HttpError = require('./models/httpError');
+const url = require('./mongoUrl');
 
 const app = express();
 
@@ -23,4 +25,10 @@ app.use((error, req, res, next) => {
   res.status(error.code || 404).json({RESULT: error.message || 'Anknown error'});
 });
 
-app.listen(5000);
+mongoose
+  .connect(url)
+  .then(() => {
+    app.listen(5000);
+  }).catch((err) => {
+    console.log(err)
+  });
